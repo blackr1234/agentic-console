@@ -36,218 +36,57 @@ import {
 
 import ModelEditOverlay from "@/components/ModelEditOverlay";
 
-const TABLE_COLUMNS = {
-	drag: "36px",
-	model: "minmax(240px, 2.4fr)",
-	provider: "minmax(150px, 1fr)",
-	type: "minmax(120px, 0.7fr)",
-	status: "minmax(130px, 0.8fr)",
-	context: "minmax(150px, 0.9fr)",
-	features: "minmax(145px, 0.9fr)",
-	updated: "minmax(180px, 1.1fr)",
-	actions: "145px",
-};
+import models from "./model-data.json";
 
-const tableColumns = Object.values(TABLE_COLUMNS).join(" ");
-
-const models = [
-	{
-		id: 1,
-		name: "gpt-5-chat",
-		provider: "Azure OpenAI",
-		type: "reasoning",
-		status: "Disabled",
-		context: "32K",
-		output: "16K",
-		features: ["IMG", "Stream"],
-		updated: "Jun 17, 2026, 02:34 PM",
-		icon: "openai",
-	},
-	{
-		id: 2,
-		name: "GPT 5.4",
-		alias: "gpt-5.4",
-		provider: "Azure OpenAI",
-		type: "reasoning",
-		status: "Active",
-		context: "200K",
-		output: "50K",
-		features: ["IMG", "Stream"],
-		updated: "Aug 19, 2026, 07:15 PM",
-		icon: "openai",
-	},
-	{
-		id: 3,
-		name: "gpt-image-2",
-		provider: "Azure OpenAI",
-		type: "image",
-		status: "Active",
-		context: "N/A",
-		output: "N/A",
-		features: ["Stream"],
-		updated: "Aug 20, 2026, 11:52 AM",
-		icon: "openai",
-	},
-	{
-		id: 4,
-		name: "sora-2",
-		provider: "Azure OpenAI",
-		type: "video",
-		status: "Disabled",
-		context: "N/A",
-		output: "N/A",
-		features: ["Stream"],
-		updated: "Jul 24, 2026, 05:56 PM",
-		icon: "sora",
-	},
-	{
-		id: 5,
-		name: "DeepSeek-V4 Pro",
-		alias: "DeepSeek-V4-Pro",
-		provider: "Azure OpenAI",
-		type: "reasoning",
-		status: "Active",
-		context: "242K",
-		output: "35K",
-		features: ["IMG", "Stream"],
-		updated: "Aug 17, 2026, 03:32 PM",
-		icon: "deepseek",
-	},
-	{
-		id: 6,
-		name: "Voxtral Mini 3B",
-		alias: "RedHatAI/Voxtral-Mini-3B-2507-FP8-dynamic",
-		provider: "Red Hat AI",
-		type: "voice",
-		status: "Active",
-		context: "33K",
-		output: "8K",
-		features: ["Stream"],
-		updated: "Aug 20, 2026, 01:30 PM",
-		icon: "redhat",
-	},
-	{
-		id: 7,
-		name: "Whisper Large v3 Turbo",
-		alias: "RedHatAI/whisper-large-v3-turbo-quantized.w4a16",
-		provider: "Red Hat AI",
-		type: "voice",
-		status: "Active",
-		context: "N/A",
-		output: "N/A",
-		features: ["Stream"],
-		updated: "Aug 20, 2026, 01:30 PM",
-		icon: "redhat",
-	},
-	{
-		id: 8,
-		name: "GPT-OSS 120B",
-		alias: "RedHatAI/gpt-oss-120b",
-		provider: "Red Hat AI",
-		type: "reasoning",
-		status: "Active",
-		context: "131K",
-		output: "33K",
-		features: ["Stream"],
-		updated: "Aug 20, 2026, 01:31 PM",
-		icon: "redhat",
-	},
-	{
-		id: 9,
-		name: "Qwen3 Coder 480B",
-		alias: "RedHatAI/Qwen3-Coder-480B-A35B-Instruct-FP8",
-		provider: "Red Hat AI",
-		type: "reasoning",
-		status: "Active",
-		context: "262K",
-		output: "66K",
-		features: ["Stream"],
-		updated: "Aug 20, 2026, 01:30 PM",
-		icon: "redhat",
-	},
-];
+const COLS = [
+	"36px",
+	"minmax(240px, 2.4fr)",
+	"minmax(150px, 1fr)",
+	"minmax(120px, 0.7fr)",
+	"minmax(130px, 0.8fr)",
+	"minmax(150px, 0.9fr)",
+	"minmax(145px, 0.9fr)",
+	"minmax(180px, 1.1fr)",
+	"145px",
+].join(" ");
 
 const typeConfig = {
-	reasoning: {
-		label: "reasoning",
-		icon: <Bot size={13} />,
-		bg: "rgba(201, 142, 56, 0.11)",
-		color: "#93611d",
-	},
-	image: {
-		label: "image",
-		icon: <Image alt="" size={13} />,
-		bg: "rgba(78, 120, 150, 0.1)",
-		color: "#526d7f",
-	},
-	video: {
-		label: "video",
-		icon: <Video size={13} />,
-		bg: "rgba(78, 120, 150, 0.1)",
-		color: "#526d7f",
-	},
-	voice: {
-		label: "voice",
-		icon: <Volume2 size={13} />,
-		bg: "rgba(78, 120, 150, 0.1)",
-		color: "#526d7f",
-	},
+	reasoning: { label: "reasoning", icon: <Bot size={13} />, bg: "rgba(201, 142, 56, 0.11)", color: "#93611d" },
+	image: { label: "image", icon: <Image alt="" size={13} />, bg: "rgba(78, 120, 150, 0.1)", color: "#526d7f" },
+	video: { label: "video", icon: <Video size={13} />, bg: "rgba(78, 120, 150, 0.1)", color: "#526d7f" },
+	voice: { label: "voice", icon: <Volume2 size={13} />, bg: "rgba(78, 120, 150, 0.1)", color: "#526d7f" },
 };
 
-const tableGridSx = {
+const avatarConfig = {
+	openai: { bgcolor: "#08683f", color: "#ffffff", icon: <Bot size={24} strokeWidth={1.8} /> },
+	sora: { bgcolor: "#e9eef7", color: "#3b5a88", icon: <Bot size={23} /> },
+	deepseek: { bgcolor: "#eef2ff", color: "#173f98", icon: <Workflow size={24} /> },
+	redhat: { bgcolor: "#f5f1ee", color: "#a20e1d", icon: <Zap size={21} fill="currentColor" /> },
+};
+
+// Shared style helpers
+const grid = (extra = {}) => ({
 	display: "grid",
-	gridTemplateColumns: tableColumns,
+	gridTemplateColumns: COLS,
 	width: "max-content",
 	minWidth: "100%",
 	boxSizing: "border-box",
-};
-
-const headerCellSx = {
-	display: "flex",
-	width: "100%",
-	height: "100%",
-	minWidth: 0,
-	alignItems: "center",
-	justifyContent: "flex-start",
-	textAlign: "left",
-	fontSize: 14,
-	fontWeight: 700,
-	color: "#465365",
-};
-
-const rowCellSx = {
+	...extra,
+});
+const cell = (extra = {}) => ({
 	display: "flex",
 	minWidth: 0,
 	alignItems: "center",
 	justifyContent: "flex-start",
-};
-
-const modelAvatarConfig = {
-	openai: {
-		bgcolor: "#08683f",
-		color: "#ffffff",
-		icon: <Bot size={24} strokeWidth={1.8} />,
-	},
-	sora: {
-		bgcolor: "#e9eef7",
-		color: "#3b5a88",
-		icon: <Bot size={23} />,
-	},
-	deepseek: {
-		bgcolor: "#eef2ff",
-		color: "#173f98",
-		icon: <Workflow size={24} />,
-	},
-	redhat: {
-		bgcolor: "#f5f1ee",
-		color: "#a20e1d",
-		icon: <Zap size={21} fill="currentColor" />,
-	},
-};
+	...extra,
+});
+const ellipsis = { whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" };
+const chipIcon = { "& .MuiChip-icon": { color: "inherit", ml: 0.8 } };
+const selectSx = { maxWidth: { md: 470 }, height: 44, borderRadius: "8px", color: "#6a7583" };
+const pageBtnSx = { width: 36, height: 36, border: "1px solid #dfe5ec", borderRadius: "8px" };
 
 function ModelAvatar({ type }) {
-	const config = modelAvatarConfig[type] ?? modelAvatarConfig.redhat;
-
+	const c = avatarConfig[type] ?? avatarConfig.redhat;
 	return (
 		<Box
 			sx={{
@@ -257,34 +96,30 @@ function ModelAvatar({ type }) {
 				borderRadius: "50%",
 				display: "grid",
 				placeItems: "center",
-				bgcolor: config.bgcolor,
-				color: config.color,
+				bgcolor: c.bgcolor,
+				color: c.color,
 			}}
 		>
-			{config.icon}
+			{c.icon}
 		</Box>
 	);
 }
 
 function ModelTypeChip({ type }) {
-	const config = typeConfig[type];
-
+	const c = typeConfig[type];
 	return (
 		<Chip
 			size="small"
-			icon={config.icon}
-			label={config.label}
+			icon={c.icon}
+			label={c.label}
 			sx={{
 				height: 28,
-				bgcolor: config.bg,
-				color: config.color,
+				bgcolor: c.bg,
+				color: c.color,
 				borderRadius: "6px",
 				fontWeight: 600,
 				fontSize: 13,
-				"& .MuiChip-icon": {
-					color: "inherit",
-					ml: 0.8,
-				},
+				...chipIcon,
 			}}
 		/>
 	);
@@ -292,7 +127,6 @@ function ModelTypeChip({ type }) {
 
 function StatusChip({ status }) {
 	const active = status === "Active";
-
 	return (
 		<Chip
 			size="small"
@@ -320,14 +154,12 @@ function StatusChip({ status }) {
 			sx={{
 				height: 30,
 				px: 0.3,
-				bgcolor: active ? "rgba(28, 154, 97, 0.1)" : "rgba(190, 70, 70, 0.09)",
-				color: active ? "#168153" : "#9d3c3c",
 				borderRadius: "6px",
 				fontWeight: 600,
 				fontSize: 13,
-				"& .MuiChip-icon": {
-					color: "inherit",
-				},
+				bgcolor: active ? "rgba(28, 154, 97, 0.1)" : "rgba(190, 70, 70, 0.09)",
+				color: active ? "#168153" : "#9d3c3c",
+				"& .MuiChip-icon": { color: "inherit" },
 			}}
 		/>
 	);
@@ -335,7 +167,6 @@ function StatusChip({ status }) {
 
 function FeatureChip({ feature }) {
 	const isImage = feature === "IMG";
-
 	return (
 		<Chip
 			size="small"
@@ -343,15 +174,12 @@ function FeatureChip({ feature }) {
 			label={feature}
 			sx={{
 				height: 28,
-				bgcolor: isImage ? "rgba(194, 137, 67, 0.1)" : "rgba(28, 115, 173, 0.1)",
-				color: isImage ? "#986324" : "#17648e",
 				borderRadius: "6px",
 				fontWeight: 700,
 				fontSize: 13,
-				"& .MuiChip-icon": {
-					color: "inherit",
-					ml: 0.8,
-				},
+				...chipIcon,
+				bgcolor: isImage ? "rgba(194, 137, 67, 0.1)" : "rgba(28, 115, 173, 0.1)",
+				color: isImage ? "#986324" : "#17648e",
 			}}
 		/>
 	);
@@ -359,32 +187,10 @@ function FeatureChip({ feature }) {
 
 function DragHandle() {
 	return (
-		<Box
-			sx={{
-				...rowCellSx,
-				height: "100%",
-				color: "#7d8997",
-				cursor: "grab",
-			}}
-		>
-			<Box
-				sx={{
-					width: 14,
-					display: "grid",
-					gridTemplateColumns: "repeat(2, 3px)",
-					gap: "3px",
-				}}
-			>
-				{Array.from({ length: 6 }).map((_, index) => (
-					<Box
-						key={index}
-						sx={{
-							width: 3,
-							height: 3,
-							borderRadius: "50%",
-							bgcolor: "#8e99a7",
-						}}
-					/>
+		<Box sx={{ ...cell({ height: "100%" }), color: "#7d8997", cursor: "grab" }}>
+			<Box sx={{ width: 14, display: "grid", gridTemplateColumns: "repeat(2, 3px)", gap: "3px" }}>
+				{Array.from({ length: 6 }).map((_, i) => (
+					<Box key={i} sx={{ width: 3, height: 3, borderRadius: "50%", bgcolor: "#8e99a7" }} />
 				))}
 			</Box>
 		</Box>
@@ -396,92 +202,59 @@ function TableHeader() {
 
 	return (
 		<Box
-			sx={{
-				...tableGridSx,
+			sx={grid({
 				minHeight: 54,
 				px: 2.5,
 				bgcolor: "#fafbfd",
 				borderTop: "1px solid #e4e8ee",
 				borderBottom: "1px solid #e4e8ee",
 				alignItems: "stretch",
-			}}
+			})}
 		>
-			{headers.map((header, index) => (
+			{headers.map((h, i) => (
 				<Box
-					key={`${header}-${index}`}
+					key={i}
 					sx={{
-						...headerCellSx,
-						...(header === "Features" && {
-							px: 1.5,
-						}),
-						...(header === "Updated" && {
-							px: 1,
-						}),
-						...(header === "Actions" && {
-							px: 1,
-						}),
+						...cell(),
+						height: "100%",
+						textAlign: "left",
+						fontSize: 14,
+						fontWeight: 700,
+						color: "#465365",
+						...(h === "Features" && { px: 1.5 }),
+						...(["Updated", "Actions"].includes(h) && { px: 1 }),
 					}}
 				>
-					{header}
+					{h}
 				</Box>
 			))}
 		</Box>
 	);
 }
 
-function ModelRow({ model, setEditOverlayOpen }) {
+function ModelRow({ model, onEdit }) {
 	return (
 		<Box
-			sx={{
-				...tableGridSx,
+			sx={grid({
 				minHeight: 86,
 				px: 2.5,
 				alignItems: "center",
 				borderBottom: "1px solid #edf0f4",
 				transition: "background-color 0.15s ease",
-				"&:hover": {
-					bgcolor: "#fafcff",
-				},
-			}}
+				"&:hover": { bgcolor: "#fafcff" },
+			})}
 		>
 			<DragHandle />
 
-			<Box sx={rowCellSx}>
-				<Stack
-					direction="row"
-					spacing={2}
-					sx={{
-						minWidth: 0,
-						alignItems: "center",
-					}}
-				>
+			<Box sx={cell()}>
+				<Stack direction="row" spacing={2} sx={{ minWidth: 0, alignItems: "center" }}>
 					<ModelAvatar type={model.icon} />
-
 					<Box sx={{ minWidth: 0 }}>
-						<Typography
-							sx={{
-								fontSize: 16,
-								fontWeight: 700,
-								color: "#263241",
-								whiteSpace: "nowrap",
-								overflow: "hidden",
-								textOverflow: "ellipsis",
-							}}
-						>
+						<Typography sx={{ fontSize: 16, fontWeight: 700, color: "#263241", ...ellipsis }}>
 							{model.name}
 						</Typography>
-
 						{model.alias && (
-							<Typography
-								sx={{
-									mt: 0.2,
-									fontSize: 13,
-									color: "#536172",
-									whiteSpace: "nowrap",
-									overflow: "hidden",
-									textOverflow: "ellipsis",
-								}}
-							>
+							<Typography sx={{ mt: 0.2, fontSize: 13, color: "#536172", ...ellipsis }}>
 								{model.alias}
 							</Typography>
 						)}
@@ -489,154 +262,60 @@ function ModelRow({ model, setEditOverlayOpen }) {
 				</Stack>
 			</Box>
 
-			<Box sx={rowCellSx}>
-				<Stack
-					direction="row"
-					spacing={0.7}
-					sx={{
-						alignItems: "center",
-					}}
-				>
+			<Box sx={cell()}>
+				<Stack direction="row" spacing={0.7} sx={{ alignItems: "center" }}>
 					<Cloud size={16} color="#59809a" />
-
-					<Typography
-						sx={{
-							fontSize: 15,
-							color: "#364352",
-						}}
-					>
-						{model.provider}
-					</Typography>
+					<Typography sx={{ fontSize: 15, color: "#364352" }}>{model.provider}</Typography>
 				</Stack>
 			</Box>
 
-			<Box sx={rowCellSx}>
+			<Box sx={cell()}>
 				<ModelTypeChip type={model.type} />
 			</Box>
-
-			<Box sx={rowCellSx}>
+			<Box sx={cell()}>
 				<StatusChip status={model.status} />
 			</Box>
 
-			<Box sx={rowCellSx}>
+			<Box sx={cell()}>
 				<Stack spacing={0.4}>
-					<Stack
-						direction="row"
-						spacing={0.8}
-						sx={{
-							alignItems: "center",
-						}}
-					>
-						<Bot size={12} color="#7c8793" />
-
-						<Typography
-							sx={{
-								fontSize: 14,
-								color: "#4b5866",
-							}}
-						>
-							{model.context}
-						</Typography>
-					</Stack>
-
-					<Stack
-						direction="row"
-						spacing={0.8}
-						sx={{
-							alignItems: "center",
-						}}
-					>
-						<Zap size={12} color="#7c8793" />
-
-						<Typography
-							sx={{
-								fontSize: 14,
-								color: "#4b5866",
-							}}
-						>
-							{model.output}
-						</Typography>
-					</Stack>
-				</Stack>
-			</Box>
-
-			<Box
-				sx={{
-					...rowCellSx,
-					px: 1.5,
-				}}
-			>
-				<Stack
-					spacing={0.5}
-					sx={{
-						alignItems: "flex-start",
-					}}
-				>
-					{model.features.map((feature) => (
-						<FeatureChip key={feature} feature={feature} />
+					{[
+						["context", Bot],
+						["output", Zap],
+					].map(([key, Icon]) => (
+						<Stack key={key} direction="row" spacing={0.8} sx={{ alignItems: "center" }}>
+							<Icon size={12} color="#7c8793" />
+							<Typography sx={{ fontSize: 14, color: "#4b5866" }}>{model[key]}</Typography>
+						</Stack>
 					))}
 				</Stack>
 			</Box>
 
-			<Box
-				sx={{
-					...rowCellSx,
-					px: 1,
-				}}
-			>
-				<Typography
-					sx={{
-						fontSize: 14,
-						color: "#4b5866",
-						lineHeight: 1.6,
-					}}
-				>
-					{model.updated}
-				</Typography>
+			<Box sx={cell({ px: 1.5 })}>
+				<Stack spacing={0.5} sx={{ alignItems: "flex-start" }}>
+					{model.features.map((f) => (
+						<FeatureChip key={f} feature={f} />
+					))}
+				</Stack>
 			</Box>
 
-			<Box
-				sx={{
-					...rowCellSx,
-					px: 1,
-				}}
-			>
-				<Stack
-					direction="row"
-					spacing={0.5}
-					sx={{
-						alignItems: "center",
-					}}
-				>
-					<Tooltip title="Edit" onClick={() => setEditOverlayOpen(true)}>
-						<IconButton
-							size="small"
-							sx={{
-								color: "#19855e",
-							}}
-						>
+			<Box sx={cell({ px: 1 })}>
+				<Typography sx={{ fontSize: 14, color: "#4b5866", lineHeight: 1.6 }}>{model.updated}</Typography>
+			</Box>
+
+			<Box sx={cell({ px: 1 })}>
+				<Stack direction="row" spacing={0.5} sx={{ alignItems: "center" }}>
+					<Tooltip title="Edit">
+						<IconButton size="small" onClick={onEdit} sx={{ color: "#19855e" }}>
 							<Edit3 size={20} />
 						</IconButton>
 					</Tooltip>
-
 					<Tooltip title="Permissions">
-						<IconButton
-							size="small"
-							sx={{
-								color: "#61788f",
-							}}
-						>
+						<IconButton size="small" sx={{ color: "#61788f" }}>
 							<Shield size={19} />
 						</IconButton>
 					</Tooltip>
-
 					<Tooltip title="Delete">
-						<IconButton
-							size="small"
-							sx={{
-								color: "#a94d4d",
-							}}
-						>
+						<IconButton size="small" sx={{ color: "#a94d4d" }}>
 							<Trash2 size={19} />
 						</IconButton>
 					</Tooltip>
@@ -651,22 +330,22 @@ export default function UserModelsPage() {
 	const [provider, setProvider] = useState("all");
 	const [type, setType] = useState("all");
 	const [page, setPage] = useState(1);
+	const [pageSize, setPageSize] = useState(10);
+	const [editOverlayOpen, setEditOverlayOpen] = useState(false);
 
 	const filteredModels = useMemo(() => {
-		const searchValue = search.trim().toLowerCase();
-
-		return models.filter((model) => {
-			const searchableText = [model.name, model.alias, model.provider].filter(Boolean).join(" ").toLowerCase();
-
-			const matchesSearch = !searchValue || searchableText.includes(searchValue);
-
-			const matchesProvider = provider === "all" || model.provider === provider;
-
-			const matchesType = type === "all" || model.type === type;
-
-			return matchesSearch && matchesProvider && matchesType;
-		});
+		const q = search.trim().toLowerCase();
+		return models.filter(
+			(m) =>
+				(!q || [m.name, m.alias, m.provider].filter(Boolean).join(" ").toLowerCase().includes(q)) &&
+				(provider === "all" || m.provider === provider) &&
+				(type === "all" || m.type === type),
+		);
 	}, [search, provider, type]);
+
+	const totalPages = Math.max(1, Math.ceil(filteredModels.length / pageSize));
+	const currentPage = Math.min(page, totalPages);
+	const pagedModels = filteredModels.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
 	const handleRefresh = () => {
 		setSearch("");
@@ -675,36 +354,14 @@ export default function UserModelsPage() {
 		setPage(1);
 	};
 
-	const [editOverlayOpen, setEditOverlayOpen] = useState(false);
-
 	return (
-		<Box
-			sx={{
-				minHeight: "100vh",
-				bgcolor: "#f8fafc",
-				p: {
-					xs: 2,
-					sm: 3,
-				},
-			}}
-		>
-			<Box
-				sx={{
-					display: "flex",
-					alignItems: "flex-start",
-					justifyContent: "space-between",
-					gap: 2,
-					mb: 3,
-				}}
-			>
+		<Box sx={{ minHeight: "100vh", bgcolor: "#f8fafc", p: { xs: 2, sm: 3 } }}>
+			<Box sx={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 2, mb: 3 }}>
 				<Box>
 					<Typography
 						component="h1"
 						sx={{
-							fontSize: {
-								xs: 28,
-								sm: 32,
-							},
+							fontSize: { xs: 28, sm: 32 },
 							fontWeight: 800,
 							color: "#202a38",
 							letterSpacing: "-0.7px",
@@ -712,19 +369,10 @@ export default function UserModelsPage() {
 					>
 						User Models
 					</Typography>
-
-					<Typography
-						sx={{
-							mt: 0.5,
-							color: "#53606e",
-							fontSize: 15,
-							fontWeight: 500,
-						}}
-					>
+					<Typography sx={{ mt: 0.5, color: "#53606e", fontSize: 15, fontWeight: 500 }}>
 						{models.length} models available
 					</Typography>
 				</Box>
-
 				<Button
 					variant="contained"
 					startIcon={<Plus size={18} />}
@@ -740,9 +388,7 @@ export default function UserModelsPage() {
 						fontSize: 14,
 						whiteSpace: "nowrap",
 						boxShadow: "0 2px 6px rgba(28, 55, 150, 0.18)",
-						"&:hover": {
-							bgcolor: "#102e91",
-						},
+						"&:hover": { bgcolor: "#102e91" },
 					}}
 				>
 					Add New Model
@@ -769,34 +415,14 @@ export default function UserModelsPage() {
 						justifyContent: "space-between",
 					}}
 				>
-					<Stack
-						direction="row"
-						spacing={1.2}
-						sx={{
-							alignItems: "center",
-						}}
-					>
-						<Box
-							sx={{
-								display: "flex",
-								alignItems: "center",
-								color: "#35516c",
-							}}
-						>
+					<Stack direction="row" spacing={1.2} sx={{ alignItems: "center" }}>
+						<Box sx={{ display: "flex", alignItems: "center", color: "#35516c" }}>
 							<Workflow size={25} strokeWidth={1.8} />
 						</Box>
-
-						<Typography
-							sx={{
-								fontSize: 20,
-								fontWeight: 750,
-								color: "#2b3645",
-							}}
-						>
+						<Typography sx={{ fontSize: 20, fontWeight: 750, color: "#2b3645" }}>
 							Available Models
 						</Typography>
 					</Stack>
-
 					<Button
 						variant="outlined"
 						startIcon={<RefreshCw size={19} />}
@@ -809,44 +435,24 @@ export default function UserModelsPage() {
 							borderRadius: "8px",
 							fontWeight: 600,
 							px: 2,
-							"&:hover": {
-								borderColor: "#b9c4cf",
-								bgcolor: "#f8fafc",
-							},
+							"&:hover": { borderColor: "#b9c4cf", bgcolor: "#f8fafc" },
 						}}
 					>
 						Refresh
 					</Button>
 				</Stack>
 
-				<Box
-					sx={{
-						p: 2.5,
-						borderBottom: "1px solid #e7ebf0",
-					}}
-				>
-					<Stack
-						direction={{
-							xs: "column",
-							md: "row",
-						}}
-						spacing={1.8}
-					>
+				<Box sx={{ p: 2.5, borderBottom: "1px solid #e7ebf0" }}>
+					<Stack direction={{ xs: "column", md: "row" }} spacing={1.8}>
 						<TextField
 							value={search}
-							onChange={(event) => setSearch(event.target.value)}
+							onChange={(e) => setSearch(e.target.value)}
 							placeholder="Search models, providers..."
 							size="small"
 							fullWidth
 							sx={{
-								maxWidth: {
-									md: 470,
-								},
-								"& .MuiOutlinedInput-root": {
-									height: 44,
-									borderRadius: "8px",
-									bgcolor: "#ffffff",
-								},
+								maxWidth: { md: 470 },
+								"& .MuiOutlinedInput-root": { height: 44, borderRadius: "8px", bgcolor: "#ffffff" },
 							}}
 							slotProps={{
 								input: {
@@ -858,41 +464,25 @@ export default function UserModelsPage() {
 								},
 							}}
 						/>
-
 						<Select
 							value={provider}
-							onChange={(event) => setProvider(event.target.value)}
+							onChange={(e) => setProvider(e.target.value)}
 							fullWidth
 							size="small"
 							IconComponent={ChevronDown}
-							sx={{
-								maxWidth: {
-									md: 470,
-								},
-								height: 44,
-								borderRadius: "8px",
-								color: "#6a7583",
-							}}
+							sx={selectSx}
 						>
 							<MenuItem value="all">All Providers</MenuItem>
 							<MenuItem value="Azure OpenAI">Azure OpenAI</MenuItem>
 							<MenuItem value="Red Hat AI">Red Hat AI</MenuItem>
 						</Select>
-
 						<Select
 							value={type}
-							onChange={(event) => setType(event.target.value)}
+							onChange={(e) => setType(e.target.value)}
 							fullWidth
 							size="small"
 							IconComponent={ChevronDown}
-							sx={{
-								maxWidth: {
-									md: 470,
-								},
-								height: 44,
-								borderRadius: "8px",
-								color: "#6a7583",
-							}}
+							sx={selectSx}
 						>
 							<MenuItem value="all">All Types</MenuItem>
 							<MenuItem value="reasoning">Reasoning</MenuItem>
@@ -903,42 +493,17 @@ export default function UserModelsPage() {
 					</Stack>
 				</Box>
 
-				<Box
-					sx={{
-						width: "100%",
-						overflowX: "auto",
-						overflowY: "hidden",
-					}}
-				>
+				<Box sx={{ width: "100%", overflowX: "auto", overflowY: "hidden" }}>
 					<TableHeader />
-
-					{filteredModels.map((model) => (
-						<ModelRow key={model.id} model={model} setEditOverlayOpen={setEditOverlayOpen} />
+					{pagedModels.map((m) => (
+						<ModelRow key={m.id} model={m} onEdit={() => setEditOverlayOpen(true)} />
 					))}
-
 					{filteredModels.length === 0 && (
-						<Box
-							sx={{
-								py: 10,
-								textAlign: "center",
-							}}
-						>
-							<Typography
-								sx={{
-									fontSize: 17,
-									fontWeight: 700,
-									color: "#344152",
-								}}
-							>
+						<Box sx={{ py: 10, textAlign: "center" }}>
+							<Typography sx={{ fontSize: 17, fontWeight: 700, color: "#344152" }}>
 								No models found
 							</Typography>
-
-							<Typography
-								sx={{
-									mt: 0.5,
-									color: "#758190",
-								}}
-							>
+							<Typography sx={{ mt: 0.5, color: "#758190" }}>
 								Try changing your search or filters.
 							</Typography>
 						</Box>
@@ -969,29 +534,18 @@ export default function UserModelsPage() {
 							whiteSpace: "nowrap",
 						}}
 					>
-						Showing 1 to {filteredModels.length} of {filteredModels.length} models
+						Showing {(currentPage - 1) * pageSize + 1} to{" "}
+						{Math.min(currentPage * pageSize, filteredModels.length)} of {filteredModels.length} models
 					</Typography>
-
-					<Stack
-						direction="row"
-						spacing={0.8}
-						sx={{
-							alignItems: "center",
-						}}
-					>
+					<Stack direction="row" spacing={0.8} sx={{ alignItems: "center" }}>
 						<IconButton
-							disabled
+							disabled={currentPage === 1}
+							onClick={() => setPage(currentPage - 1)}
 							size="small"
-							sx={{
-								width: 36,
-								height: 36,
-								border: "1px solid #dfe5ec",
-								borderRadius: "8px",
-							}}
+							sx={pageBtnSx}
 						>
 							<ChevronLeft size={18} />
 						</IconButton>
-
 						<Button
 							variant="outlined"
 							onClick={() => setPage(1)}
@@ -1007,31 +561,23 @@ export default function UserModelsPage() {
 						>
 							{page}
 						</Button>
-
 						<IconButton
-							disabled
+							disabled={currentPage === totalPages}
+							onClick={() => setPage(currentPage + 1)}
 							size="small"
-							sx={{
-								width: 36,
-								height: 36,
-								border: "1px solid #dfe5ec",
-								borderRadius: "8px",
-							}}
+							sx={pageBtnSx}
 						>
 							<ChevronRight size={18} />
 						</IconButton>
 					</Stack>
-
 					<Select
-						value={10}
-						size="small"
-						sx={{
-							height: 38,
-							minWidth: 110,
-							borderRadius: "8px",
-							color: "#455363",
-							fontSize: 14,
+						value={pageSize}
+						onChange={(e) => {
+							setPageSize(e.target.value);
+							setPage(1);
 						}}
+						size="small"
+						sx={{ height: 38, minWidth: 110, borderRadius: "8px", color: "#455363", fontSize: 14 }}
 					>
 						<MenuItem value={10}>10 / page</MenuItem>
 						<MenuItem value={20}>20 / page</MenuItem>
